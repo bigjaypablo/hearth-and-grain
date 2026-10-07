@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { contact } from "../data/contact";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { EASE } from "../lib/motion";
+import { submitForm } from "../lib/forms";
 import PageHeader from "../components/ui/PageHeader";
 import Chip from "../components/ui/Chip";
 import Button from "../components/ui/Button";
@@ -62,6 +63,7 @@ export default function Contact() {
   const [values, setValues] = useState<Values>(empty);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
+  const [submitError, setSubmitError] = useState("");
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
     setValues((v) => ({ ...v, [key]: value }));
@@ -70,14 +72,30 @@ export default function Contact() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const trap = new FormData(e.currentTarget).get("_gotcha");
+    if (typeof trap === "string" && trap.length > 0) {
+      setStatus("done");
+      return;
+    }
     const found = validate(values);
     setErrors(found);
     if (Object.keys(found).length > 0) return;
 
     setStatus("sending");
-    // Front-end only for now. Replace this delay with a fetch() to Formspree, EmailJS or your own API.
-    await new Promise((r) => setTimeout(r, 900));
-    setStatus("done");
+    setSubmitError("");
+    const result = await submitForm("contact", {
+      name: values.name.trim(),
+      email: values.email.trim(),
+      projectType: values.type,
+      budget: values.budget,
+      message: values.message.trim(),
+    });
+    if (result.ok) {
+      setStatus("done");
+    } else {
+      setSubmitError(result.error);
+      setStatus("idle");
+    }
   };
 
   const reset = () => {
@@ -175,6 +193,7 @@ export default function Contact() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
                   >
+                    <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
                     <div className="grid gap-x-5 sm:grid-cols-2">
                       <Field id="name" label="Your name" error={errors.name}>
                         <input
@@ -248,6 +267,11 @@ export default function Contact() {
                       />
                     </Field>
 
+                    {submitError && (
+                      <p role="alert" className="mb-4 text-sm text-clay">
+                        {submitError}
+                      </p>
+                    )}
                     <Button
                       type="submit"
                       icon={<ArrowRight />}

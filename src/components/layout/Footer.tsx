@@ -7,19 +7,34 @@ import Button from "../ui/Button";
 import AppLink from "../ui/AppLink";
 import { ArrowRight } from "../ui/Icons";
 import { scrollToTop } from "./SmoothScroll";
+import { isEmail, submitForm } from "../../lib/forms";
 
-type Status = "idle" | "error" | "done";
+type Status = "idle" | "error" | "sending" | "failed" | "done";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const { newsletter } = footer;
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-    setStatus(valid ? "done" : "error");
-    if (valid) setEmail("");
+    const trap = new FormData(e.currentTarget).get("_gotcha");
+    if (typeof trap === "string" && trap.length > 0) {
+      setStatus("done");
+      return;
+    }
+    if (!isEmail(email)) {
+      setStatus("error");
+      return;
+    }
+    setStatus("sending");
+    const result = await submitForm("newsletter", { email: email.trim() });
+    if (result.ok) {
+      setEmail("");
+      setStatus("done");
+    } else {
+      setStatus("failed");
+    }
   };
 
   return (
@@ -40,6 +55,7 @@ export default function Footer() {
                 noValidate
                 className="mt-5 flex max-w-md flex-col gap-2 sm:flex-row"
               >
+                <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
                 <label htmlFor="newsletter-email" className="sr-only">
                   Email address
                 </label>
@@ -58,7 +74,7 @@ export default function Footer() {
                   aria-describedby="newsletter-msg"
                   className="min-w-0 flex-1 rounded-full border border-cream/20 bg-cream/10 px-5 py-3.5 text-sm text-cream placeholder:text-cream/45 focus:border-cream/60 focus:outline-none"
                 />
-                <Button type="submit" variant="light" icon={<ArrowRight />}>
+                <Button type="submit" variant="light" icon={<ArrowRight />} disabled={status === "sending"}>
                   {newsletter.button}
                 </Button>
               </form>
@@ -67,11 +83,13 @@ export default function Footer() {
                 id="newsletter-msg"
                 role="status"
                 className={`mt-3 min-h-[1.25rem] text-sm ${
-                  status === "error" ? "text-blush" : "text-cream/70"
+                  status === "error" || status === "failed" ? "text-blush" : "text-cream/70"
                 }`}
               >
                 {status === "done" && newsletter.success}
                 {status === "error" && newsletter.error}
+                {status === "failed" && "Something went wrong. Please try again."}
+                {status === "sending" && "Subscribing..."}
               </p>
             </Reveal>
 
