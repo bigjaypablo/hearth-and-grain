@@ -23,7 +23,7 @@ export const footer = {
     text: "Occasional design ideas and project stories. No spam.",
     placeholder: "Your email address",
     button: "Subscribe",
-    success: "Thanks, you are on the list.",
+    success: "Thanks, we will be in touch.",
     error: "Please enter a valid email address.",
   },
   columns: [
