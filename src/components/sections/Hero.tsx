@@ -56,15 +56,16 @@ export default function Hero() {
 
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-ink/25"
+          className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-ink/20"
         />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-ink/50 to-transparent" />
 
         <motion.div
           style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
           className="relative z-10 p-6 pt-32 sm:p-10 lg:p-14"
         >
           <Reveal delay={0.2}>
-            <p className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-cream/75">
+            <p className="mb-5 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-glow before:h-px before:w-8 before:bg-glow">
               {hero.eyebrow}
             </p>
           </Reveal>
@@ -74,11 +75,12 @@ export default function Hero() {
             trigger="mount"
             delay={0.35}
             text={hero.title}
+            highlight="like you"
             className="text-display-xl max-w-3xl text-balance text-cream"
           />
 
           <Reveal delay={0.9} className="mt-6">
-            <p className="max-w-md text-base text-cream/80 sm:text-lg">{hero.description}</p>
+            <p className="max-w-md text-base text-sand/90 sm:text-lg">{hero.description}</p>
           </Reveal>
 
           <Reveal delay={1.05} className="mt-8 flex flex-wrap gap-3">
@@ -91,7 +93,7 @@ export default function Hero() {
           </Reveal>
 
           <Reveal delay={1.2} className="mt-10">
-            <p className="mb-3 text-sm text-cream/75">{hero.collectionLabel}</p>
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-sand/70">{hero.collectionLabel}</p>
           </Reveal>
 
           <Stagger delay={1.25} stagger={0.1} className="grid grid-cols-4 gap-2 sm:gap-4">
@@ -113,7 +115,7 @@ export default function Hero() {
                     aria-hidden="true"
                     className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"
                   />
-                  <span className="absolute bottom-2 left-2 right-2 text-[11px] font-medium leading-tight text-cream sm:bottom-3 sm:left-3 sm:text-sm">
+                  <span className="absolute bottom-2 left-2 right-2 text-xs font-medium leading-tight text-cream sm:bottom-3 sm:left-3 sm:text-sm">
                     {c.label}
                   </span>
                 </Link>

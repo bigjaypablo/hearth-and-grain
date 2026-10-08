@@ -22,12 +22,12 @@ export const site = {
     eyebrow: "Interior design studio",
     title: "Designing homes that feel like you, inside and out",
     description:
-      "We shape calm, lived-in spaces with natural materials, honest craftsmanship and a clear point of view, from the first sketch to the last cushion.",
+      "Calm, lived-in homes shaped with natural materials and honest craft.",
     primaryCta: { label: "View projects", href: "/projects" },
     secondaryCta: { label: "Our approach", href: "/services" },
     image: unsplash("photo-1600210492486-724fe5c67fb0", 2000),
-    imageAlt: "Warm modern living room with a cream sectional and a round wooden coffee table",
-    collectionLabel: "Explore our collections",
+    imageAlt: "Warm living room with a sofa and natural wood table",
+    collectionLabel: "Browse by room",
   },
   heroCategories: [
     {
@@ -47,7 +47,7 @@ export const site = {
     },
     {
       label: "Outdoor",
-      image: unsplash("photo-1564013799919-ab600027ffc6", 600),
+      image: unsplash("photo-1523217582562-09d0def993a6", 600),
       alt: "Outdoor terrace with lounge seating and plants",
     },
   ] satisfies HeroCategory[],

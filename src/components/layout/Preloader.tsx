@@ -46,7 +46,6 @@ export default function Preloader({ onDone }: Props) {
         transition={{ duration: 0.8, ease: EASE }}
         className="flex items-center gap-3 font-serif text-3xl tracking-display"
       >
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-sage text-lg">H</span>
         {site.name}
       </motion.div>
 

@@ -19,12 +19,22 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const [scrollingUp, setScrollingUp] = useState(false);
   const [open, setOpen] = useState(false);
+  const isHome = pathname === "/";
+  const [brandA, brandB] = site.name.split(" & ");
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
+  useMotionValueEvent(scrollY, "change", (v) => {
+    const prev = scrollY.getPrevious() ?? v;
+    setScrolled(v > 24);
+    if (v < prev - 2) setScrollingUp(true);
+    else if (v > prev + 2) setScrollingUp(false);
+  });
 
   useEffect(() => {
     setOpen(false);
+    setScrolled(window.scrollY > 24);
+    setScrollingUp(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -38,33 +48,45 @@ export default function Navbar() {
     n.to === "/" ? pathname === "/" : pathname.startsWith(n.to)
   )?.to;
 
-  // Home has a dark hero behind the nav. Every other page is cream, so the nav stays solid.
-  const solid = scrolled || open || pathname !== "/";
+  // floating = detached pill. At the very top the nav sits flat on the page.
+  const floating = scrolled;
+  // Cream text only while flat on the dark home hero. Everything else uses dark text.
+  const onLight = scrolled || open || !isHome;
+  // Mobile: menu icon at the top and when scrolling up, CTA while scrolling down.
+  // For the strict version (CTA always replaces the menu while floating), use: !floating || open
+  const menuVisible = !floating || open;
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 sm:pt-6">
+      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
         <motion.nav
           aria-label="Main"
-          initial={{ opacity: 0, y: -24 }}
-          animate={{ opacity: 1, y: 0, scale: scrolled ? 0.97 : 1 }}
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className={`relative flex w-full max-w-[1080px] items-center justify-between rounded-full py-2 pl-5 pr-2 transition-colors duration-500 ${
-            solid ? "text-ink" : "text-cream"
-          }`}
+          className={`relative mx-auto flex w-full items-center justify-between transition-all duration-500 ease-soft ${
+            floating
+              ? "max-w-[1080px] py-2 pl-5 pr-2"
+              : "max-w-[2000px] px-6 py-4 sm:px-10 sm:py-6 lg:px-14"
+          } ${onLight ? "text-ink" : "text-cream"}`}
         >
           <span
             aria-hidden="true"
-            className={`absolute inset-0 -z-10 rounded-full backdrop-blur-xl transition-all duration-500 ${
-              solid ? "bg-cream/85 shadow-soft" : "border border-white/20 bg-ink/20"
+            className={`absolute inset-0 -z-10 rounded-full bg-cream/85 shadow-soft backdrop-blur-xl transition-opacity duration-500 ${
+              floating ? "opacity-100" : "opacity-0"
             }`}
           />
 
-          <Link to="/" className="flex items-center gap-2 font-serif text-lg tracking-display">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-sage text-xs text-cream">
-              H
-            </span>
-            {site.name}
+          <Link to="/" className="font-serif text-xl tracking-display">
+            {brandA}{" "}
+            <span
+              className={`italic transition-colors duration-500 ${
+                onLight ? "text-wood" : "text-glow"
+              }`}
+            >
+              &amp;
+            </span>{" "}
+            {brandB}
           </Link>
 
           <ul className="hidden items-center gap-1 md:flex">
@@ -81,14 +103,14 @@ export default function Navbar() {
                       <motion.span
                         layoutId="nav-active"
                         className={`absolute inset-0 rounded-full ${
-                          solid ? "bg-ink" : "bg-cream"
+                          onLight ? "bg-ink" : "bg-cream"
                         }`}
                         transition={{ type: "spring", stiffness: 380, damping: 34 }}
                       />
                     )}
                     <span
                       className={`relative z-10 transition-colors duration-300 ${
-                        isActive ? (solid ? "text-cream" : "text-ink") : ""
+                        isActive ? (onLight ? "text-cream" : "text-ink") : ""
                       }`}
                     >
                       {item.label}
@@ -102,23 +124,62 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <Button
               href={navCta.href}
-              variant={solid ? "dark" : "light"}
+              variant={onLight ? "dark" : "light"}
+              size="sm"
               icon={<ArrowRight />}
               className="hidden md:inline-flex"
             >
               {navCta.label}
             </Button>
 
-            <button
-              type="button"
-              onClick={() => setOpen((o) => !o)}
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? "Close menu" : "Open menu"}
-              className="grid h-11 w-11 place-items-center rounded-full md:hidden"
-            >
-              {open ? <CloseIcon width={22} height={22} /> : <MenuIcon width={22} height={22} />}
-            </button>
+            <div className="md:hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                {menuVisible ? (
+                  <motion.button
+                    key="menu"
+                    type="button"
+                    onClick={() => setOpen((o) => !o)}
+                    aria-expanded={open}
+                    aria-controls="mobile-menu"
+                    aria-label={open ? "Close menu" : "Open menu"}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.85 }}
+                    transition={{ duration: 0.25, ease: EASE }}
+                    className={`grid h-11 w-11 place-items-center rounded-full transition-colors duration-500 ${
+                      floating || open
+                        ? "bg-transparent"
+                        : isHome
+                          ? "bg-white/15 backdrop-blur-md"
+                          : "bg-ink/5"
+                    }`}
+                  >
+                    {open ? (
+                      <CloseIcon width={22} height={22} />
+                    ) : (
+                      <MenuIcon width={22} height={22} />
+                    )}
+                  </motion.button>
+                ) : (
+                  <motion.div
+                    key="cta"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.25, ease: EASE }}
+                  >
+                    <Button
+                      href={navCta.href}
+                      variant="dark"
+                      size="sm"
+                      icon={<ArrowRight />}
+                    >
+                      {navCta.label}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </motion.nav>
       </header>

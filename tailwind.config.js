@@ -9,6 +9,7 @@ export default {
         ink: "#1C1B19",
         sage: "#6F7F69",
         wood: "#A7794F",
+        glow: "#D9B58C",
         muted: "#6B675F",
         line: "#DDD4C6",
         clay: "#B5543A",
