@@ -21,7 +21,7 @@ export default function Card({
   children,
 }: Props) {
   return (
-    <div className={`group relative overflow-hidden rounded-card bg-sand ${className}`}>
+    <div className={`group relative isolate overflow-hidden rounded-card bg-sand ${className}`}>
       <SafeImage
         src={src}
         alt={alt}

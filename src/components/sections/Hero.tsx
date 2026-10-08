@@ -30,7 +30,7 @@ export default function Hero() {
     <section id="home" ref={ref} className="p-3 sm:p-4">
       <motion.div
         style={reduced ? undefined : { scale: cardScale, transformOrigin: "50% 0%" }}
-        className="relative flex min-h-[calc(100svh-1.5rem)] flex-col justify-end overflow-hidden rounded-card-lg bg-sand sm:min-h-[calc(100svh-2rem)]"
+        className="relative flex min-h-[calc(100svh-1.5rem)] flex-col justify-end isolate overflow-hidden rounded-card-lg bg-sand [clip-path:inset(0_round_2.25rem)] sm:min-h-[calc(100svh-2rem)]"
       >
         <motion.div
           style={reduced ? undefined : { y: imgY }}

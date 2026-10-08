@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -24,11 +24,27 @@ export default function Navbar() {
   const isHome = pathname === "/";
   const [brandA, brandB] = site.name.split(" & ");
 
+  const lastY = useRef(0);
+  const travel = useRef(0);
+
   useMotionValueEvent(scrollY, "change", (v) => {
-    const prev = scrollY.getPrevious() ?? v;
+    const diff = v - lastY.current;
+    lastY.current = v;
     setScrolled(v > 24);
-    if (v < prev - 2) setScrollingUp(true);
-    else if (v > prev + 2) setScrollingUp(false);
+
+    if (v <= 24) {
+      travel.current = 0;
+      setScrollingUp(false);
+      return;
+    }
+    if (diff === 0) return;
+
+    // Reset the running total whenever the scroll direction flips.
+    if (diff > 0 !== travel.current > 0) travel.current = 0;
+    travel.current += diff;
+
+    if (travel.current < -10) setScrollingUp(true);
+    else if (travel.current > 10) setScrollingUp(false);
   });
 
   useEffect(() => {
@@ -54,7 +70,7 @@ export default function Navbar() {
   const onLight = scrolled || open || !isHome;
   // Mobile: menu icon at the top and when scrolling up, CTA while scrolling down.
   // For the strict version (CTA always replaces the menu while floating), use: !floating || open
-  const menuVisible = !floating || open;
+  const menuVisible = !floating || scrollingUp || open;
 
   return (
     <>
