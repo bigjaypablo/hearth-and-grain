@@ -37,6 +37,8 @@ export default function TextReveal({
   const Tag = motion[as] as typeof motion.div;
   const words = text.split(" ");
   const marked = new Set((highlight ?? "").split(" ").filter(Boolean).map(clean));
+  // aria-label is only allowed on headings. Paragraphs and spans get hidden text instead.
+  const isHeading = as === "h1" || as === "h2" || as === "h3";
 
   if (reduced) {
     const Plain = as;
@@ -51,11 +53,12 @@ export default function TextReveal({
   return (
     <Tag
       className={className}
-      aria-label={text}
+      aria-label={isHeading ? text : undefined}
       initial="hidden"
       variants={staggerContainer(stagger, delay)}
       {...triggerProps}
     >
+      {!isHeading && <span className="sr-only">{text}</span>}
       {words.map((w, i) => {
         const hl = marked.has(clean(w));
         return (

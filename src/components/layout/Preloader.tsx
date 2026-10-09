@@ -15,7 +15,7 @@ export default function Preloader({ onDone }: Props) {
     let timeout: number | undefined;
 
     const controls = animate(0, 100, {
-      duration: 1.5,
+      duration: 1,
       ease: LOAD_EASE,
       onUpdate: (v) => {
         if (countRef.current) countRef.current.textContent = String(Math.round(v));
@@ -54,7 +54,7 @@ export default function Preloader({ onDone }: Props) {
           className="h-full origin-left bg-cream"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.5, ease: LOAD_EASE }}
+          transition={{ duration: 1, ease: LOAD_EASE }}
         />
       </div>
 

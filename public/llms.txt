@@ -1,0 +1,11 @@
+# Hearth & Grain
+
+> Interior design studio creating warm, timeless homes with natural materials. This site is a portfolio demo.
+
+## Pages
+
+- [Home](https://hearth-and-grain.vercel.app/): Studio overview and featured work
+- [About](https://hearth-and-grain.vercel.app/about): The studio story, values and team
+- [Services](https://hearth-and-grain.vercel.app/services): Full-home, single-room, sourcing and outdoor design
+- [Projects](https://hearth-and-grain.vercel.app/projects): Selected residential projects
+- [Contact](https://hearth-and-grain.vercel.app/contact): Start a project

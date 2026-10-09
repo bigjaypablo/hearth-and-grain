@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { site } from "../../data/site";
 import { EASE } from "../../lib/motion";
+import { srcSetFrom } from "../../lib/unsplash";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import TextReveal from "../motion/TextReveal";
 import Reveal from "../motion/Reveal";
@@ -44,6 +45,8 @@ export default function Hero() {
           >
             <SafeImage
               src={hero.image}
+              srcSet={srcSetFrom(hero.image, [640, 960, 1400, 2000])}
+              sizes="100vw"
               alt={hero.imageAlt}
               width={2000}
               height={1300}

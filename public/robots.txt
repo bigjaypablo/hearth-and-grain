@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hearth-and-grain.vercel.app/sitemap.xml
